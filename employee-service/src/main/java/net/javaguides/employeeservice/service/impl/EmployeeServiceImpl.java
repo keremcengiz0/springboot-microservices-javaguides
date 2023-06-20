@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import net.javaguides.employeeservice.dto.APIResponseDto;
 import net.javaguides.employeeservice.dto.DepartmentDto;
 import net.javaguides.employeeservice.dto.EmployeeDto;
+import net.javaguides.employeeservice.dto.OrganizationDto;
 import net.javaguides.employeeservice.entity.Employee;
 import net.javaguides.employeeservice.exception.EmailAlreadyExistsException;
 import net.javaguides.employeeservice.exception.ResourceNotFoundException;
@@ -67,13 +68,19 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .bodyToMono(DepartmentDto.class)
                 .block();
 
+        OrganizationDto organizationDto = webClient.get().uri("http://localhost:8083/api/organizations/" + employee.getOrganizationCode())
+                .retrieve()
+                .bodyToMono(OrganizationDto.class)
+                .block();
+
         //DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
 
         EmployeeDto employeeDto = employeeMapper.mapToEmployeeDto(employee);
 
         APIResponseDto apiResponseDto = new APIResponseDto();
-        apiResponseDto.setEmployeeDto(employeeDto);
-        apiResponseDto.setDepartmentDto(departmentDto);
+        apiResponseDto.setEmployee(employeeDto);
+        apiResponseDto.setDepartment(departmentDto);
+        apiResponseDto.setOrganization(organizationDto);
 
         return apiResponseDto;
     }
@@ -92,8 +99,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeDto employeeDto = employeeMapper.mapToEmployeeDto(employee);
 
         APIResponseDto apiResponseDto = new APIResponseDto();
-        apiResponseDto.setEmployeeDto(employeeDto);
-        apiResponseDto.setDepartmentDto(departmentDto);
+        apiResponseDto.setEmployee(employeeDto);
+        apiResponseDto.setDepartment(departmentDto);
 
         return apiResponseDto;
 
